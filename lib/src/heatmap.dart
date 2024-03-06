@@ -37,6 +37,12 @@ class HeatMap extends StatelessWidget {
                 Colors.green.shade600,
                 Colors.green.shade800,
               ],
+          negativeColors: [
+            Colors.blue.shade200,
+            Colors.blue.shade400,
+            Colors.blue.shade600,
+            Colors.blue.shade800,
+          ],
           strokeColor: strokeColor ?? Colors.red.shade100,
           textStyle: textStyle ??
               TextStyle(
@@ -54,6 +60,7 @@ class HeatMap extends StatelessWidget {
 class HeatMapPainter extends CustomPainter {
   final Map<DateTime, int> data;
   final List<Color> colors;
+  final List<Color> negativeColors;
   final TextStyle textStyle;
   final Color strokeColor;
   final double itemSize;
@@ -65,6 +72,7 @@ class HeatMapPainter extends CustomPainter {
   HeatMapPainter({
     required this.data,
     required this.colors,
+    required this.negativeColors,
     required this.textStyle,
     required this.strokeColor,
     required this.itemSize,
@@ -172,6 +180,12 @@ class HeatMapPainter extends CustomPainter {
   }
 
   Color _getColorForValue(int value) {
+    if (value < 0 && value.abs() < negativeColors.length) {
+      return negativeColors[value.abs() % negativeColors.length];
+    } else if (value < 0) {
+      return negativeColors.last;
+    }
+
     if (value >= colors.length) {
       return colors.last;
     } else {
