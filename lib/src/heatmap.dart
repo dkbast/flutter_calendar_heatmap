@@ -11,6 +11,7 @@ class HeatMap extends StatelessWidget {
   final Color? strokeColor;
   final double itemSize;
   final double itemPadding;
+  final int futureWeeks;
 
   HeatMap({
     super.key,
@@ -21,6 +22,7 @@ class HeatMap extends StatelessWidget {
     this.strokeColor,
     this.itemSize = 14,
     this.itemPadding = 4,
+    this.futureWeeks = 0,
   });
 
   @override
@@ -43,6 +45,7 @@ class HeatMap extends StatelessWidget {
             Colors.blue.shade600,
             Colors.blue.shade800,
           ],
+          futureWeeks: futureWeeks,
           strokeColor: strokeColor ?? Colors.red.shade100,
           textStyle: textStyle ??
               TextStyle(
@@ -65,6 +68,7 @@ class HeatMapPainter extends CustomPainter {
   final Color strokeColor;
   final double itemSize;
   final double itemPadding;
+  final int futureWeeks;
 
   static const int rows = 7;
   List<bool> hasDrawnMonth = [];
@@ -77,6 +81,7 @@ class HeatMapPainter extends CustomPainter {
     required this.strokeColor,
     required this.itemSize,
     required this.itemPadding,
+    required this.futureWeeks,
   });
 
   @override
@@ -171,8 +176,9 @@ class HeatMapPainter extends CustomPainter {
   DateTime _calculateDateForIndex(int cols, int index) {
     DateTime startOfCurrentWeek =
         DateTime.now().subtract(Duration(days: DateTime.now().weekday - 1));
-    DateTime startDate =
-        startOfCurrentWeek.subtract(Duration(days: (cols - 1) * 7));
+    DateTime startDate = startOfCurrentWeek
+        .subtract(Duration(days: (cols - 1) * 7))
+        .add(Duration(days: futureWeeks * 7));
 
     int weeksPassed = index ~/ 7;
     int dayOfWeek = index % 7;
@@ -180,6 +186,9 @@ class HeatMapPainter extends CustomPainter {
   }
 
   Color _getColorForValue(int value) {
+    if (value == 0) {
+      return Colors.grey.shade200;
+    }
     if (value < 0 && value.abs() < negativeColors.length) {
       return negativeColors[value.abs() % negativeColors.length];
     } else if (value < 0) {
