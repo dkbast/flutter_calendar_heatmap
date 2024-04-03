@@ -176,9 +176,12 @@ class HeatMapPainter extends CustomPainter {
   DateTime _calculateDateForIndex(int cols, int index) {
     DateTime startOfCurrentWeek =
         DateTime.now().subtract(Duration(days: DateTime.now().weekday - 1));
+
+    final clampedFutureWeeks = futureWeeks.clamp(0, cols ~/ 2);
+
     DateTime startDate = startOfCurrentWeek
         .subtract(Duration(days: (cols - 1) * 7))
-        .add(Duration(days: futureWeeks * 7));
+        .add(Duration(days: clampedFutureWeeks * 7));
 
     int weeksPassed = index ~/ 7;
     int dayOfWeek = index % 7;
